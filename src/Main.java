@@ -4,15 +4,26 @@ public class Main {
         Board board1 = new Board();
         Board board2 = new Board();
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Введите имя игрока 1: ");
+        System.out.println("Выберите режим:");
+        System.out.println("1 - Один игрок");
+        System.out.println("2 - Два игрока");
+        int gameMode = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Введите имя игрока: ");
         String player1Name = scanner.nextLine();
-        if (player1Name.isEmpty()) {
-            player1Name = "Игрок 1";
+        if(player1Name.isEmpty()){
+            player1Name="Игрок";
         }
-        System.out.print("Введите имя игрока 2: ");
-        String player2Name = scanner.nextLine();
-        if (player2Name.isEmpty()) {
-            player2Name = "Игрок 2";
+        String player2Name;
+        if(gameMode==1){
+            player2Name="BOT";
+        } else{
+            System.out.print("Введите имя игрока 2: ");
+            player2Name= scanner.nextLine();
+            if(player2Name.isEmpty()){player2Name= "Игрок 2";
+
+            }
+
         }
         if (player1Name.equalsIgnoreCase("admin") || player2Name.equalsIgnoreCase("admin")) {
             System.out.println("ADMIN MODE");
@@ -45,6 +56,7 @@ public class Main {
         int[] coords;
         int x, y;
         while (true) {
+            clearConsole();
             Board currentBoard;
             String playerName;
             if (player1Turn) {
@@ -54,44 +66,66 @@ public class Main {
                 currentBoard = board1;
                 playerName = player2Name;
             }
-            System.out.println("\nТВОЁ ПОЛЕ:");
-            if (player1Turn) {
-                board1.printPrettyBoard(false);
-            } else {
-                board2.printPrettyBoard(false);
+            if(player1Turn){
+                printBoardsSideBySide(board1, board2);
+            } else{
+                printBoardsSideBySide(board2, board1);
             }
-            System.out.println("\nПОЛЕ ПРОТИВНИКА:");
-            currentBoard.printPrettyBoard(true);
-
             System.out.println("\n" + playerName + ", твой ход!");
             try {
-                System.out.print("Введи координаты (например A1): ");
-                userInput = scanner.next();
+                if(playerName.equals("BOT")){
+                    userInput = generateBotShot();
+                    System.out.println("BOT стреляет: " + userInput);
+                    try{
+                        Thread.sleep(1500);
+                    }
+                    catch(Exception e){
+                    }
+                } else{
+                    System.out.print("Введи координаты (например A1): ");
+                    userInput = scanner.next();
+                }
                 coords = InputParser.parse(userInput);
                 x = coords[0];
                 y = coords[1];
                 int result = currentBoard.shoot(x, y);
+                if(playerName.equals("BOT")){
+                    if(result==1){
+                        targetX=x;
+                        targetY=y;
+                    }
+                    else if(result==0){
+                        if(targetX==x && targetY==y){
+                            targetX=-1;
+                            targetY=-1;
+                        }
+                    }
+                }
                 if (result == -1) continue;
                 String moveText = userInput.toUpperCase();
                 MoveLogger.logMove(playerName, moveText, result == 1);
                 System.out.println(result == 1 ? "ПОПАЛ!" : "МИМО");
-                currentBoard.printPrettyBoard(true);
+                if(player1Turn){printBoardsSideBySide(board1, board2);
+                } else{
+                    printBoardsSideBySide(board2, board1);
+                }
                 if (currentBoard.allShipsSunk()) {
                     System.out.println(" Победил " + playerName);
                     MoveLogger.logGameEnd(playerName);
                     break;
                 }
                 if (result == 1) {
-                    System.out.println(" Попадание! Ходишь ещё раз.");
+                    System.out.println("Попадание! Ходишь ещё раз.");
+                    System.out.println("Нажми Enter чтобы продолжить...");
+                    scanner.nextLine();
+                    scanner.nextLine();
                 } else if (result == 0) {
-                    System.out.println(" Мимо. Ход переходит.");
-                    System.out.println("Нажми Enter, чтобы передать ход...");
+                    System.out.println("Мимо. Ход переходит.");
+                    System.out.println("Нажми Enter чтобы передать ход...");
                     scanner.nextLine();
                     scanner.nextLine();
-                    for (int i = 0; i < 30; i++) {
-                        System.out.println();
-                    }
                     player1Turn = !player1Turn;
+
                 }
             } catch (Exception e) {
                 System.out.println(" Неверный ввод! Пример: A1 или 1A");
@@ -125,6 +159,47 @@ public class Main {
                     }
                 }
             }
+        }
+    }
+    private static boolean[][] botShots = new boolean[16][16];
+    private static int targetX = -1;
+    private static int targetY = -1;
+    private static String generateBotShot(){
+        int row;
+        int col;
+        if(targetX!=-1){
+            int[][] dirs={{-1,0}, {1,0}, {0,-1}, {0,1}};
+            for(int[] d : dirs){
+                row= targetX+d[0];
+                col= targetY+d[1];
+                if(row>=0 && row<16 && col>=0 && col<16 && !botShots[row][col]){
+                    botShots[row][col]=true;
+                    char letter= (char)('A'+col);
+                    return "" +letter +(row+1);
+                }
+            }
+        }
+        while(true){
+            row= (int)(Math.random()*16);
+            col= (int)(Math.random()*16);
+            if(!botShots[row][col]){
+                botShots[row][col]=true;
+                char letter= (char)('A'+col);
+                return "" +letter +(row+1);
+            }
+        }
+    }
+    private static void clearConsole(){
+        for(int i=0; i<50; i++){
+            System.out.println();
+        }
+    }
+    private static void printBoardsSideBySide(Board myBoard, Board enemyBoard){
+        String[] left = myBoard.getBoardLines(false);
+        String[] right = enemyBoard.getBoardLines(true);
+        System.out.println("\nТВОЁ ПОЛЕ" + "                                  " + "ПОЛЕ ПРОТИВНИКА");
+        for(int i=0; i<left.length; i++){
+            System.out.printf("%-45s %s%n", left[i], right[i]);
         }
     }
 }

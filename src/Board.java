@@ -141,14 +141,29 @@ public class Board {
             Ship ship = ships[x][y];
             ship.hit();
             if (ship.isSunk()) {
-                System.out.println(" Корабль уничтожен!");
-                for (int[] coord : ship.getCoordinates()) {
+                System.out.println("Корабль уничтожен!");
+                for(int[] coord : ship.getCoordinates()){
                     int cx = coord[0];
                     int cy = coord[1];
-                    grid[cx][cy] = '+'; //  ПЕРЕЗАТИРАЕМ ВСЁ
+                    grid[cx][cy]='+';
+                }
+                for(int[] coord : ship.getCoordinates()){
+                    int cx = coord[0];
+                    int cy = coord[1];
+                    for(int dx=-1; dx<=1; dx++) {
+                        for(int dy=-1; dy<=1; dy++){
+                            int nx= cx+dx;
+                            int ny= cy+dy;
+                            if(nx>=0 && nx<SIZE && ny>=0 && ny<SIZE){
+                                if(grid[nx][ny] == '.'){
+                                    grid[nx][ny] ='O';
+                                }
+                            }
+                        }
+                    }
                 }
             } else {
-                grid[x][y] = 'X'; //  ТОЛЬКО ЕСЛИ НЕ УНИЧТОЖЕН
+                grid[x][y] = 'X';
             }
             return 1;
         } else {
@@ -165,5 +180,27 @@ public class Board {
             }
         }
         return true;
+    }
+    public String[] getBoardLines(boolean hideShips){
+        String[] lines = new String[SIZE + 1];
+        StringBuilder header = new StringBuilder("   ");
+        for(char c='A'; c<'A'+SIZE; c++){
+            header.append(c).append(" ");
+        }
+        lines[0]=header.toString();
+        for(int i=0; i<SIZE; i++){
+            StringBuilder row = new StringBuilder();
+            row.append(String.format("%2d ", i+1));
+            for(int j=0; j<SIZE; j++){
+                char cell = grid[i][j];
+                if(hideShips && cell=='S'){
+                    row.append(". ");
+                } else{
+                    row.append(cell).append(" ");
+                }
+            }
+            lines[i+1]= row.toString();
+        }
+        return lines;
     }
 }
