@@ -76,13 +76,8 @@ public class Main {
                 if(playerName.equals("BOT")){
                     userInput = generateBotShot();
                     System.out.println("BOT стреляет: " + userInput);
-                    try{
-                        Thread.sleep(1500);
-                    }
-                    catch(Exception e){
-                    }
-                } else{
-                    System.out.print("Введи координаты (например A1): ");
+                } else {
+                    System.out.print("Введите координаты: ");
                     userInput = scanner.next();
                 }
                 coords = InputParser.parse(userInput);
@@ -91,44 +86,42 @@ public class Main {
                 int result = currentBoard.shoot(x, y);
                 if(playerName.equals("BOT")){
                     if(result==1){
-                        targetX=x;
-                        targetY=y;
+                        botHits.add(new int[]{x, y});
                     }
-                    else if(result==0){
-                        if(targetX==x && targetY==y){
-                            targetX=-1;
-                            targetY=-1;
-                        }
+                    else if(result==2){
+                        botHits.clear();
                     }
                 }
-                if (result == -1) continue;
+                if(result==-1)
+                    continue;
                 String moveText = userInput.toUpperCase();
-                MoveLogger.logMove(playerName, moveText, result == 1);
-                System.out.println(result == 1 ? "ПОПАЛ!" : "МИМО");
-                if(player1Turn){printBoardsSideBySide(board1, board2);
-                } else{
+                MoveLogger.logMove(playerName, moveText, result!=0);
+                System.out.println(result==0 ? "МИМО" : "ПОПАЛ!");
+                if(player1Turn){
+                    printBoardsSideBySide(board1, board2);
+                } else {
                     printBoardsSideBySide(board2, board1);
                 }
-                if (currentBoard.allShipsSunk()) {
-                    System.out.println(" Победил " + playerName);
+                if(currentBoard.allShipsSunk()){
+                    System.out.println("Победил " + playerName);
                     MoveLogger.logGameEnd(playerName);
                     break;
                 }
-                if (result == 1) {
+                if(result==1 || result==2){
                     System.out.println("Попадание! Ходишь ещё раз.");
-                    System.out.println("Нажми Enter чтобы продолжить...");
+                    System.out.println("Нажми Enter...");
                     scanner.nextLine();
                     scanner.nextLine();
-                } else if (result == 0) {
+                } else {
                     System.out.println("Мимо. Ход переходит.");
-                    System.out.println("Нажми Enter чтобы передать ход...");
+                    System.out.println("Нажми Enter...");
                     scanner.nextLine();
                     scanner.nextLine();
                     player1Turn = !player1Turn;
-
                 }
-            } catch (Exception e) {
-                System.out.println(" Неверный ввод! Пример: A1 или 1A");
+            }
+            catch(Exception e){
+                System.out.println("Неверный ввод!");
             }
         }
     }
@@ -162,30 +155,71 @@ public class Main {
         }
     }
     private static boolean[][] botShots = new boolean[16][16];
-    private static int targetX = -1;
-    private static int targetY = -1;
+    private static java.util.List<int[]> botHits = new java.util.ArrayList<>();
     private static String generateBotShot(){
         int row;
         int col;
-        if(targetX!=-1){
-            int[][] dirs={{-1,0}, {1,0}, {0,-1}, {0,1}};
+    /*
+       если нашли несколько попаданий
+       пытаемся понять направление
+     */
+        if(botHits.size() >= 2){
+            int[] first = botHits.get(0);
+            int[] second = botHits.get(1);
+            boolean vertical = first[1]==second[1];
+            if(vertical){
+                int min = botHits.stream().mapToInt(h->h[0]).min().getAsInt();
+                int max = botHits.stream().mapToInt(h->h[0]).max().getAsInt();
+                col = first[1];
+                row = min-1;
+                if(row>=0 && !botShots[row][col]){
+                    botShots[row][col]=true;
+                    return "" +(char)('A'+col) +(row+1);
+                }
+                row = max+1;
+                if(row<16 && !botShots[row][col]){
+                    botShots[row][col]=true;
+                    return "" +(char)('A'+col) +(row+1);
+                }
+            }
+            else{
+                int min = botHits.stream().mapToInt(h->h[1]).min().getAsInt();
+                int max = botHits.stream().mapToInt(h->h[1]).max().getAsInt();
+                row = first[0];
+                col = min-1;
+                if(col>=0 && !botShots[row][col]
+                ){
+                    botShots[row][col]=true;
+                    return "" +(char)('A'+col) +(row+1);
+                }
+                col = max+1;
+                if(col<16 && !botShots[row][col]){
+                    botShots[row][col]=true;
+                    return "" +(char)('A'+col) +(row+1);
+                }
+            }
+        }
+    /*
+       одно попадание
+     */
+        if(botHits.size()==1){
+            int[] hit = botHits.get(0);
+            int[][] dirs = {{-1,0}, {1,0}, {0,-1}, {0,1}};
             for(int[] d : dirs){
-                row= targetX+d[0];
-                col= targetY+d[1];
+                row = hit[0]+d[0];
+                col = hit[1]+d[1];
                 if(row>=0 && row<16 && col>=0 && col<16 && !botShots[row][col]){
                     botShots[row][col]=true;
-                    char letter= (char)('A'+col);
-                    return "" +letter +(row+1);
+                    return "" +(char)('A'+col) +(row+1);
                 }
             }
         }
         while(true){
-            row= (int)(Math.random()*16);
-            col= (int)(Math.random()*16);
+            row = (int)(Math.random()*16);
+            col = (int)(Math.random()*16);
             if(!botShots[row][col]){
                 botShots[row][col]=true;
-                char letter= (char)('A'+col);
-                return "" +letter +(row+1);
+                return "" +(char)('A'+col) +(row+1);
             }
         }
     }

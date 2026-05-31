@@ -165,7 +165,7 @@ public class Board {
             } else {
                 grid[x][y] = 'X';
             }
-            return 1;
+            return ship.isSunk() ? 2 : 1;
         } else {
             grid[x][y] = 'O';
             return 0;
