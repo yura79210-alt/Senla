@@ -48,6 +48,10 @@ public class Main {
             }
         } else{
             setupPlayerShips(scanner, board1, player1Name, fleet);
+            System.out.println("\nПередайте ход следующему игроку.");
+            System.out.println("Нажмите Enter...");
+            scanner.nextLine();
+            clearConsole();
             setupPlayerShips(scanner, board2, player2Name, fleet);
         }
         boolean player1Turn = true;
@@ -56,7 +60,6 @@ public class Main {
         int[] coords;
         int x, y;
         while (true) {
-            clearConsole();
             Board currentBoard;
             String playerName;
             if (player1Turn) {
@@ -96,7 +99,14 @@ public class Main {
                     continue;
                 String moveText = userInput.toUpperCase();
                 MoveLogger.logMove(playerName, moveText, result!=0);
-                System.out.println(result==0 ? "МИМО" : "ПОПАЛ!");
+                if(result==0){
+                    System.out.println("МИМО");
+                }
+                else if(result==1){
+                    System.out.println("РАНИЛ");
+                } else if(result==2){
+                    System.out.println("УБИЛ");
+                }
                 if(player1Turn){
                     printBoardsSideBySide(board1, board2);
                 } else {
@@ -107,21 +117,45 @@ public class Main {
                     MoveLogger.logGameEnd(playerName);
                     break;
                 }
-                if(result==1 || result==2){
-                    System.out.println("Попадание! Ходишь ещё раз.");
+                if(result==1 || result==2) {
+                    if (result == 1) {
+                        System.out.println("Ранил! Ходишь ещё раз.");
+                    } else {
+                        System.out.println("Убил! Ходишь ещё раз.");
+                    }
                     System.out.println("Нажми Enter...");
                     scanner.nextLine();
                     scanner.nextLine();
-                } else {
+                }else {
                     System.out.println("Мимо. Ход переходит.");
-                    System.out.println("Нажми Enter...");
-                    scanner.nextLine();
-                    scanner.nextLine();
+                    if(gameMode==2){
+                        System.out.println("Передайте ход следующему игроку.");
+                        System.out.println("Нажмите Enter...");
+                        scanner.nextLine();
+                        scanner.nextLine();
+                        clearConsole();
+                    } else {
+                        System.out.println("Нажмите Enter...");
+                        scanner.nextLine();
+                        scanner.nextLine();
+                    }
                     player1Turn = !player1Turn;
                 }
             }
             catch(Exception e){
-                System.out.println("Неверный ввод!");
+
+                clearConsole();
+
+                if(player1Turn){
+                    printBoardsSideBySide(board1, board2);
+                } else{
+                    printBoardsSideBySide(board2, board1);
+                }
+
+                System.out.println("\nНеверный ввод!");
+                System.out.println("Нажмите Enter...");
+                scanner.nextLine();
+                scanner.nextLine();
             }
         }
     }
@@ -136,7 +170,7 @@ public class Main {
                     board.printPrettyBoard(false);
                     System.out.println("\nКорабль размером " +size+ " (" +shipNumber+ "/" +count+ ")");
                     System.out.println("Введите координату и направление");
-                    System.out.println("Пример: A5 H");
+                    System.out.println("Пример: A5 H или V! Где H - горизонтально, V - Вертикально");
                     String coord = scanner.next();
                     String direction = scanner.next();
                     try{
@@ -145,15 +179,36 @@ public class Main {
                         placed = board.placeShip(parsed[0], parsed[1], size, horizontal);
                     }
                     catch(Exception e){
-                        System.out.println("Неверный ввод");
+
+                        clearConsole();
+
+                        board.printPrettyBoard(false);
+
+                        System.out.println("\nНеверный ввод!");
+                        System.out.println("Введите координаты заново.");
+                        System.out.println("Нажмите Enter...");
+
+                        scanner.nextLine();
+                        scanner.nextLine();
                     }
-                    if(!placed){
-                        System.out.println("Нельзя поставить сюда");
                     }
+                if(!placed){
+
+                    clearConsole();
+
+                    board.printPrettyBoard(false);
+
+                    System.out.println("\nНельзя поставить сюда");
+                    System.out.println("Попробуйте другое место.");
+                    System.out.println("Нажмите Enter...");
+
+                    scanner.nextLine();
+                    scanner.nextLine();
+                }
                 }
             }
         }
-    }
+
     private static boolean[][] botShots = new boolean[16][16];
     private static java.util.List<int[]> botHits = new java.util.ArrayList<>();
     private static String generateBotShot(){
