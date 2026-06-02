@@ -55,6 +55,10 @@ public class Main {
             setupPlayerShips(scanner, board2, player2Name, fleet);
         }
         boolean player1Turn = true;
+        int player1Shots = 0;
+        int player2Shots = 0;
+        int player1Hits = 0;
+        int player2Hits = 0;
         System.out.println ("Игра началась! Введи координаты выстрела X и Y (0-9)");
         String userInput;
         int[] coords;
@@ -87,6 +91,17 @@ public class Main {
                 x = coords[0];
                 y = coords[1];
                 int result = currentBoard.shoot(x, y);
+                if(player1Turn){
+                    player1Shots++;
+                    if(result==1 || result==2){
+                        player1Hits++;
+                    }
+                } else{
+                    player2Shots++;
+                    if(result==1 || result==2){
+                        player2Hits++;
+                    }
+                }
                 if(playerName.equals("BOT")){
                     if(result==1){
                         botHits.add(new int[]{x, y});
@@ -135,6 +150,14 @@ public class Main {
                 }
                 if(currentBoard.allShipsSunk()){
                     System.out.println("Победил " + playerName);
+                    System.out.println("\nСТАТИСТИКА:");
+                    double p1Accuracy = player1Shots==0 ? 0 : (player1Hits*100.0/player1Shots);
+                    double p2Accuracy = player2Shots==0 ? 0 : (player2Hits*100.0/player2Shots);
+                    System.out.println(player1Name+ ": ходов="+player1Shots+ ", попаданий="+player1Hits+ ", точность="+ String.format("%.1f",p1Accuracy)+ "%");
+                    System.out.println(player2Name+ ": ходов="+player2Shots+ ", попаданий="+player2Hits+ ", точность="+ String.format("%.1f",p2Accuracy)+ "%");
+                    MoveLogger.logFinalBoards(player1Name, board1.boardAsText(false), player2Name, board2.boardAsText(false));
+                    MoveLogger.logStatistics(player1Name, player1Shots, player1Hits, p1Accuracy, board1.countAliveShips());
+                    MoveLogger.logStatistics(player2Name, player2Shots, player2Hits, p2Accuracy, board2.countAliveShips());
                     MoveLogger.logGameEnd(playerName);
                     break;
                 }
@@ -162,15 +185,12 @@ public class Main {
                 }
             }
             catch(Exception e){
-
                 clearConsole();
-
                 if(player1Turn){
                     printBoardsSideBySide(board1, board2);
                 } else{
                     printBoardsSideBySide(board2, board1);
                 }
-
                 System.out.println("\nНеверный ввод!");
                 waitEnter(scanner);
             }
@@ -192,7 +212,15 @@ public class Main {
                     String direction = scanner.next();
                     try{
                         int[] parsed = InputParser.parse(coord);
-                        boolean horizontal = direction.equalsIgnoreCase("H");
+                        boolean horizontal;
+                        if(direction.equalsIgnoreCase("H")){
+                            horizontal=true;
+                        }
+                        else if(direction.equalsIgnoreCase("V")){
+                            horizontal=false;
+                        } else{
+                            throw new IllegalArgumentException();
+                        }
                         placed = board.placeShip(parsed[0], parsed[1], size, horizontal);
                         if(!placed){
                             clearConsole();
@@ -215,7 +243,6 @@ public class Main {
                 }
             }
         }
-
     private static boolean[][] botShots = new boolean[16][16];
     private static java.util.List<int[]> botHits = new java.util.ArrayList<>();
     private static String generateBotShot(){
@@ -286,9 +313,7 @@ public class Main {
         }
     }
     private static void waitEnter(Scanner scanner){
-
         System.out.println("Нажмите Enter...");
-
         scanner.nextLine();
     }
     private static void clearConsole(){

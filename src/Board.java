@@ -17,7 +17,6 @@ public class Board {
             int y,
             int size,
             boolean horizontal) {
-
         // проверяем выход за границы
         if(horizontal){
             if(y + size > SIZE){
@@ -214,5 +213,24 @@ public class Board {
             lines[i+1]= row.toString();
         }
         return lines;
+    }
+    public String boardAsText(boolean hideShips){
+        StringBuilder sb = new StringBuilder();
+        String[] lines = getBoardLines(hideShips);
+        for(String line : lines){
+            sb.append(line).append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
+    public int countAliveShips(){
+        java.util.HashSet<Ship> aliveShips = new java.util.HashSet<>();
+        for(int i=0; i<SIZE; i++){
+            for(int j=0; j<SIZE; j++){
+                if(ships[i][j] != null && !ships[i][j].isSunk()){
+                    aliveShips.add(ships[i][j]);
+                }
+            }
+        }
+        return aliveShips.size();
     }
 }
