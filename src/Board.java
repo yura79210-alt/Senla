@@ -17,15 +17,27 @@ public class Board {
             int y,
             int size,
             boolean horizontal) {
+
+        // проверяем выход за границы
+        if(horizontal){
+            if(y + size > SIZE){
+                return false;
+            }
+        } else{
+            if(x + size > SIZE){
+                return false;
+            }
+        }
         for(int i=0;i<size;i++) {
             int currentX = horizontal ? x : x+i;
             int currentY = horizontal ? y+i : y;
             for(int dx=-1; dx<=1; dx++){
                 for(int dy=-1; dy<=1; dy++){
-                    int nx = currentX+dx;
-                    int ny = currentY+dy;
-                    if(nx>=0 && nx<SIZE && ny>=0 && ny<SIZE){
-                        if(ships[nx][ny] !=null){
+                    int nx=currentX+dx;
+                    int ny=currentY+dy;
+                    if(nx>=0 && nx<SIZE &&
+                            ny>=0 && ny<SIZE){
+                        if(ships[nx][ny]!=null){
                             return false;
                         }
                     }

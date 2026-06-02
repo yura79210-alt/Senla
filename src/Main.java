@@ -144,9 +144,7 @@ public class Main {
                     } else {
                         System.out.println("Убил! Ходишь ещё раз.");
                     }
-                    System.out.println("Нажми Enter...");
-                    scanner.nextLine();
-                    scanner.nextLine();
+                    waitEnter(scanner);
                 }else {
                     System.out.println("Мимо. Ход переходит.");
                     if(gameMode==2){
@@ -174,9 +172,7 @@ public class Main {
                 }
 
                 System.out.println("\nНеверный ввод!");
-                System.out.println("Нажмите Enter...");
-                scanner.nextLine();
-                scanner.nextLine();
+                waitEnter(scanner);
             }
         }
     }
@@ -198,34 +194,24 @@ public class Main {
                         int[] parsed = InputParser.parse(coord);
                         boolean horizontal = direction.equalsIgnoreCase("H");
                         placed = board.placeShip(parsed[0], parsed[1], size, horizontal);
+                        if(!placed){
+                            clearConsole();
+                            board.printPrettyBoard(false);
+                            System.out.println("\nНельзя поставить сюда");
+                            System.out.println("Попробуйте другое место.");
+                            System.out.println("Нажмите Enter...");
+                            scanner.nextLine();
+                            scanner.nextLine();
+                        }
                     }
                     catch(Exception e){
-
                         clearConsole();
-
                         board.printPrettyBoard(false);
-
                         System.out.println("\nНеверный ввод!");
                         System.out.println("Введите координаты заново.");
-                        System.out.println("Нажмите Enter...");
-
-                        scanner.nextLine();
-                        scanner.nextLine();
+                        waitEnter(scanner);
                     }
                     }
-                if(!placed){
-
-                    clearConsole();
-
-                    board.printPrettyBoard(false);
-
-                    System.out.println("\nНельзя поставить сюда");
-                    System.out.println("Попробуйте другое место.");
-                    System.out.println("Нажмите Enter...");
-
-                    scanner.nextLine();
-                    scanner.nextLine();
-                }
                 }
             }
         }
@@ -298,6 +284,12 @@ public class Main {
                 return "" +(char)('A'+col) +(row+1);
             }
         }
+    }
+    private static void waitEnter(Scanner scanner){
+
+        System.out.println("Нажмите Enter...");
+
+        scanner.nextLine();
     }
     private static void clearConsole(){
         for(int i=0; i<50; i++){
