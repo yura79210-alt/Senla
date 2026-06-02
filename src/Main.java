@@ -92,6 +92,27 @@ public class Main {
                         botHits.add(new int[]{x, y});
                     }
                     else if(result==2){
+                        for(int[] hit : botHits){
+                            for(int dx=-1; dx<=1; dx++){
+                                for(int dy=-1; dy<=1; dy++){
+                                    int nx = hit[0] + dx;
+                                    int ny = hit[1] + dy;
+                                    if(nx>=0 && nx<16 && ny>=0 && ny<16){
+                                        botShots[nx][ny] = true;
+                                    }
+                                }
+                            }
+                        }
+                        // добавляем последний уничтоживший выстрел
+                        for(int dx=-1; dx<=1; dx++){
+                            for(int dy=-1; dy<=1; dy++){
+                                int nx = x + dx;
+                                int ny = y + dy;
+                                if(nx>=0 && nx<16 && ny>=0 && ny<16){
+                                    botShots[nx][ny] = true;
+                                }
+                            }
+                        }
                         botHits.clear();
                     }
                 }
