@@ -47,7 +47,19 @@ public class MoveLogger {
     public static void logGameEnd(String winner) {
         log("Игра окончена. Победитель: " + winner);
     }
-    public static void showAllGames() {
-        System.out.println("История игр записана в файле: game_log.txt");
+    public static void showAllGames(){
+        try{
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(FILE_NAME));
+            String line;
+            while((line = reader.readLine()) != null){
+                System.out.println(line);
+            }
+            reader.close();
+        }
+        catch(Exception e){
+            System.out.println(
+                    "История игр пока отсутствует."
+            );
+        }
     }
 }
