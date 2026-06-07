@@ -16,14 +16,12 @@ public class Main {
         }
         String player2Name;
         if(gameMode==1){
-            player2Name="BOT";
+            player2Name="Бот";
         } else{
             System.out.print("Введите имя игрока 2: ");
             player2Name= scanner.nextLine();
             if(player2Name.isEmpty()){player2Name= "Игрок 2";
-
             }
-
         }
         if (player1Name.equalsIgnoreCase("admin") || player2Name.equalsIgnoreCase("admin")) {
             System.out.println("ADMIN MODE");

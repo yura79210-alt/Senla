@@ -12,7 +12,7 @@ public class Board {
             }
         }
     }
-    private boolean canPlaceShip(
+    private boolean canPlaceShip( //проверяем можно ли ставить корабль
             int x,
             int y,
             int size,
@@ -139,26 +139,26 @@ public class Board {
     }
     // Выстрел
     public int shoot(int x, int y) {
-            if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) {
+            if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) {//проверка координат, что бы не выйти за поле
             System.out.println(" Неверные координаты!");
             return -1;
         }
-        if (grid[x][y] == 'X' || grid[x][y] == 'O' || grid[x][y] == '+') {
+        if (grid[x][y] == 'X' || grid[x][y] == 'O' || grid[x][y] == '+') {//проверка не стреляли ли уже сюда
             System.out.println(" Ты уже стрелял сюда!");
             return -1;
         }
-        if (ships[x][y] != null) {
+        if (ships[x][y] != null) {//попадание
             grid[x][y] = 'X';
             Ship ship = ships[x][y];
-            ship.hit();
-            if (ship.isSunk()) {
+            ship.hit();//урон
+            if (ship.isSunk()) {//проверка уничтожения
                 System.out.println("Корабль уничтожен!");
-                for(int[] coord : ship.getCoordinates()){
+                for(int[] coord : ship.getCoordinates()){//если уничтожен, то помечаем его "+"
                     int cx = coord[0];
                     int cy = coord[1];
                     grid[cx][cy]='+';
                 }
-                for(int[] coord : ship.getCoordinates()){
+                for(int[] coord : ship.getCoordinates()){//потом обносим уничтоженный корабль "0"
                     int cx = coord[0];
                     int cy = coord[1];
                     for(int dx=-1; dx<=1; dx++) {
@@ -182,7 +182,7 @@ public class Board {
             return 0;
         }
     }
-    public boolean allShipsSunk() {
+    public boolean allShipsSunk() {// проверка на последнего Магекяна
         for(int i=0;i<SIZE;i++) {
             for(int j=0;j<SIZE;j++) {
                 if (ships[i][j] != null && !ships[i][j].isSunk()) {
