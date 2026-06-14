@@ -4,7 +4,7 @@ public class Board {
     private static final int SIZE = 16;
     private char[][] grid = new char[SIZE][SIZE];  // отображение на экране
     private Ship[][] ships = new Ship[SIZE][SIZE]; // объекты кораблей
-    // Конструктор
+
     public Board() {
         for(int i=0;i<SIZE;i++) {
             for(int j=0;j<SIZE;j++) {
@@ -12,12 +12,12 @@ public class Board {
             }
         }
     }
-    private boolean canPlaceShip( //проверяем можно ли ставить корабль
+    private boolean canPlaceShip(
             int x,
             int y,
             int size,
             boolean horizontal) {
-        // проверяем выход за границы
+
         if(horizontal){
             if(y + size > SIZE){
                 return false;
@@ -76,7 +76,7 @@ public class Board {
             System.out.println();
         }
     }
-    // Печать поля
+
     public void printBoard() {
         for(int i=0;i<SIZE;i++) {
              for(int j=0;j<SIZE;j++) {
@@ -102,7 +102,7 @@ public class Board {
         }
         return true;
     }
-    // Новый метод: случайное размещение корабля
+
     public void placeShipRandomly(int size) {
         Random rand = new Random();
         boolean placed = false;
@@ -137,28 +137,28 @@ public class Board {
             }
         }
     }
-    // Выстрел
+
     public int shoot(int x, int y) {
-            if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) {//проверка координат, что бы не выйти за поле
+            if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) {
             System.out.println(" Неверные координаты!");
             return -1;
         }
-        if (grid[x][y] == 'X' || grid[x][y] == 'O' || grid[x][y] == '+') {//проверка не стреляли ли уже сюда
+        if (grid[x][y] == 'X' || grid[x][y] == 'O' || grid[x][y] == '+') {
             System.out.println(" Ты уже стрелял сюда!");
             return -1;
         }
-        if (ships[x][y] != null) {//попадание
+        if (ships[x][y] != null) {
             grid[x][y] = 'X';
             Ship ship = ships[x][y];
-            ship.hit();//урон
-            if (ship.isSunk()) {//проверка уничтожения
+            ship.hit();
+            if (ship.isSunk()) {
                 System.out.println("Корабль уничтожен!");
-                for(int[] coord : ship.getCoordinates()){//если уничтожен, то помечаем его "+"
+                for(int[] coord : ship.getCoordinates()){
                     int cx = coord[0];
                     int cy = coord[1];
                     grid[cx][cy]='+';
                 }
-                for(int[] coord : ship.getCoordinates()){//потом обносим уничтоженный корабль "0"
+                for(int[] coord : ship.getCoordinates()){
                     int cx = coord[0];
                     int cy = coord[1];
                     for(int dx=-1; dx<=1; dx++) {
@@ -182,7 +182,7 @@ public class Board {
             return 0;
         }
     }
-    public boolean allShipsSunk() {// проверка на последнего Магекяна
+    public boolean allShipsSunk() {
         for(int i=0;i<SIZE;i++) {
             for(int j=0;j<SIZE;j++) {
                 if (ships[i][j] != null && !ships[i][j].isSunk()) {

@@ -25,15 +25,15 @@ public class Main {
         }
         if (player1Name.equalsIgnoreCase("admin") || player2Name.equalsIgnoreCase("admin")) {
             System.out.println("ADMIN MODE");
-            MoveLogger.showAllGames(); // позже сделаем
-            return; // выходим из игры
+            MoveLogger.showAllGames();
+            return;
         }
         MoveLogger.logGameStart(player1Name, player2Name);
         System.out.println("1 - Авторасстановка");
         System.out.println("2 - Ручная расстановка");
         int setupMode = scanner.nextInt();
         scanner.nextLine();
-        //  расстановка кораблей первого игрока и второго игрока
+
         int[][] fleet = {{6,1}, {5,2}, {4,3}, {3,4}, {2,5}, {1,6}};
         if(setupMode==1){
             for (int[] shipInfo : fleet) {
@@ -65,7 +65,7 @@ public class Main {
             Board currentBoard;
             String playerName;
             if (player1Turn) {
-                currentBoard = board2; // игрок 1 стреляет по игроку 2
+                currentBoard = board2;
                 playerName = player1Name;
             } else {
                 currentBoard = board1;
@@ -246,10 +246,9 @@ public class Main {
     private static String generateBotShot(){
         int row;
         int col;
-    /*
-       если нашли несколько попаданий
-       пытаемся понять направление
-     */
+
+
+
         if(botHits.size() >= 2){
             int[] first = botHits.get(0);
             int[] second = botHits.get(1);
@@ -286,9 +285,9 @@ public class Main {
                 }
             }
         }
-    /*
-       одно попадание
-     */
+
+
+
         if(botHits.size()==1){
             int[] hit = botHits.get(0);
             int[][] dirs = {{-1,0}, {1,0}, {0,-1}, {0,1}};
