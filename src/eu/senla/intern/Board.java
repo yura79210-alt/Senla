@@ -69,28 +69,6 @@ public class Board {
         }
     }
 
-    public void printHiddenBoard() {
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                if (grid[i][j] == 'S') {
-                    System.out.print(". "); // скрываем корабль
-                } else {
-                    System.out.print(grid[i][j] + " ");
-                }
-            }
-            System.out.println();
-        }
-    }
-
-    public void printBoard() {
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                System.out.print(grid[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-
     public boolean placeShip(int x, int y, int size, boolean horizontal) {
         if (!canPlaceShip(x, y, size, horizontal)) {
             return false;

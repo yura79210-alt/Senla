@@ -82,7 +82,7 @@ public class Main {
             }
             System.out.println("\n" + playerName + ", твой ход!");
             try {
-                if (playerName.equals("BOT")) {
+                if (playerName.equals("Бот")) {
                     userInput = generateBotShot();
                     System.out.println("BOT стреляет: " + userInput);
                 } else {
@@ -104,7 +104,7 @@ public class Main {
                         player2Hits++;
                     }
                 }
-                if (playerName.equals("BOT")) {
+                if (playerName.equals("Бот")) {
                     if (result == 1) {
                         botHits.add(new int[]{x, y});
                     } else if (result == 2) {
