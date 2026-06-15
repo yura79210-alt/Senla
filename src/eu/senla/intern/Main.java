@@ -179,15 +179,11 @@ public class Main {
                     }
                     player1Turn = !player1Turn;
                 }
-            } catch (Exception e) {
-                clearConsole();
-                if (player1Turn) {
-                    printBoardsSideBySide(board1, board2);
-                } else {
-                    printBoardsSideBySide(board2, board1);
-                }
+            } catch(Exception e){
+
                 System.out.println("\nНеверный ввод!");
-                waitEnter(scanner);
+                
+                continue;
             }
         }
     }
@@ -226,9 +222,8 @@ public class Main {
                             scanner.nextLine();
                             scanner.nextLine();
                         }
-                    } catch (Exception e) {
-                        clearConsole();
-                        board.printPrettyBoard(false);
+                    } catch(Exception e){
+
                         System.out.println("\nНеверный ввод!");
                         System.out.println("Введите координаты заново.");
                         waitEnter(scanner);
