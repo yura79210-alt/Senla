@@ -82,7 +82,7 @@ public class Main {
             try {
                 if (playerName.equals("Бот")) {
                     userInput = generateBotShot();
-                    System.out.println("BOT стреляет: " + userInput);
+                    System.out.println("Бот стреляет: " + userInput);
                 } else {
                     System.out.print("Введите координаты: ");
                     userInput = scanner.next();
@@ -159,30 +159,37 @@ public class Main {
                 }
                 if (result == 1 || result == 2) {
                     if (result == 1) {
-                        System.out.println("Ранил! Ходишь ещё раз.");
+                        System.out.println("Ходишь ещё раз.");
                     } else {
-                        System.out.println("Убил! Ходишь ещё раз.");
+                        System.out.println("Ходишь ещё раз.");
                     }
+
+                    if (!playerName.equals("Бот")) {
+                        scanner.nextLine();
+                    }
+
                     waitEnter(scanner);
                 } else {
-                    System.out.println("Мимо. Ход переходит.");
-                    if (gameMode == 2) {
-                        System.out.println("Передайте ход следующему игроку.");
-                        System.out.println("Нажмите Enter...");
-                        scanner.nextLine();
-                        scanner.nextLine();
-                        clearConsole();
-                    } else {
-                        System.out.println("Нажмите Enter...");
-                        scanner.nextLine();
+                    System.out.println("Ход переходит.");
+
+                    if (!playerName.equals("Бот")) {
                         scanner.nextLine();
                     }
+
+                    if (gameMode == 2) {
+                        System.out.println("Передайте ход следующему игроку.");
+                        waitEnter(scanner);
+                        clearConsole();
+                    } else {
+                        waitEnter(scanner);
+                    }
+
                     player1Turn = !player1Turn;
                 }
             } catch(Exception e){
 
                 System.out.println("\nНеверный ввод!");
-                
+
                 continue;
             }
         }
@@ -218,9 +225,7 @@ public class Main {
                             board.printPrettyBoard(false);
                             System.out.println("\nНельзя поставить сюда");
                             System.out.println("Попробуйте другое место.");
-                            System.out.println("Нажмите Enter...");
-                            scanner.nextLine();
-                            scanner.nextLine();
+                            waitEnter(scanner);
                         }
                     } catch(Exception e){
 
