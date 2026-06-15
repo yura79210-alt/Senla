@@ -75,10 +75,8 @@ public class Main {
                 currentBoard = board1;
                 playerName = player2Name;
             }
-            if (player1Turn) {
+            if (playerName.equals(player1Name)) {
                 printBoardsSideBySide(board1, board2);
-            } else {
-                printBoardsSideBySide(board2, board1);
             }
             System.out.println("\n" + playerName + ", твой ход!");
             try {
@@ -143,10 +141,8 @@ public class Main {
                 } else if (result == 2) {
                     System.out.println("УБИЛ");
                 }
-                if (player1Turn) {
+                if (playerName.equals(player1Name)) {
                     printBoardsSideBySide(board1, board2);
-                } else {
-                    printBoardsSideBySide(board2, board1);
                 }
                 if (currentBoard.allShipsSunk()) {
                     System.out.println("Победил " + playerName);
