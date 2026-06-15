@@ -1,3 +1,5 @@
+package eu.senla.intern;
+
 public class Player {
     private String name;
     private Board board;

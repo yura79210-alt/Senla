@@ -1,3 +1,5 @@
+package eu.senla.intern;
+
 import java.util.ArrayList;
 import java.util.List;
 

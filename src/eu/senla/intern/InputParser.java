@@ -1,3 +1,5 @@
+package eu.senla.intern;
+
 public class InputParser {
     public static int[] parse(String input) {
         if (input == null) {

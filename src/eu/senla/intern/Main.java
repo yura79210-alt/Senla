@@ -1,3 +1,5 @@
+package eu.senla.intern;
+
 import java.util.Scanner;
 
 public class Main {
